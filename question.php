@@ -38,6 +38,9 @@ abstract class qtype_oumatrix_base extends question_graded_automatically {
     /** @var int whether the rows/columns or both should be shuffled. */
     public int $shuffleanswers;
 
+    /** @var string 'abc', 'ABCD', '123', etc. or '' for no numbering. */
+    public string $questionnumbering;
+
     /** @var string 'All or none' or 'partial' grading method for multiple response. */
     public string $grademethod;
 

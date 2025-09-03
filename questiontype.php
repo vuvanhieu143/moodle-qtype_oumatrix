@@ -60,6 +60,7 @@ class qtype_oumatrix extends question_type {
         $this->set_default_value('inputtype', $fromform->inputtype);
         $this->set_default_value('grademethod', $fromform->grademethod);
         $this->set_default_value('shuffleanswers', $fromform->shuffleanswers);
+        $this->set_default_value('questionnumbering', $fromform->questionnumbering);
         $this->set_default_value('shownumcorrect', $fromform->shownumcorrect);
     }
 
@@ -74,6 +75,7 @@ class qtype_oumatrix extends question_type {
             $options->inputtype = '';
             $options->grademethod = '';
             $options->shuffleanswers = 0;
+            $options->questionnumbering = 'none';
             $options->correctfeedback = '';
             $options->partiallycorrectfeedback = '';
             $options->incorrectfeedback = '';
@@ -84,6 +86,7 @@ class qtype_oumatrix extends question_type {
         $options->inputtype = $question->inputtype;
         $options->grademethod = $question->grademethod;
         $options->shuffleanswers = $question->shuffleanswers;
+        $options->questionnumbering = $question->questionnumbering;
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
         $DB->update_record('qtype_oumatrix_options', $options);
 
@@ -188,6 +191,7 @@ class qtype_oumatrix extends question_type {
         parent::initialise_question_instance($question, $questiondata);
         $question->grademethod = $questiondata->options->grademethod;
         $question->shuffleanswers = $questiondata->options->shuffleanswers;
+        $question->questionnumbering = $questiondata->options->questionnumbering;
         $this->initialise_question_columns($question, $questiondata);
         $this->initialise_question_rows($question, $questiondata);
         $this->initialise_combined_feedback($question, $questiondata, true);
@@ -396,6 +400,8 @@ class qtype_oumatrix extends question_type {
         $shuffleanswers = $format->getpath($data, ['#', 'shuffleanswers', 0, '#'], 1);
         $question->shuffleanswers = $shuffleanswers === 'false' || $shuffleanswers === 'true'
             ? $format->trans_single($shuffleanswers) : $shuffleanswers;
+        $question->questionnumbering = $format->getpath($data, ['#', 'questionnumbering'], '')
+            ? $format->import_text($format->getpath($data, ['#', 'questionnumbering'], '')) : 'none';
         $columns = $format->getpath($data, ['#', 'columns', 0, '#', 'column'], false);
         if ($columns) {
             $this->import_columns($format, $question, $columns);
@@ -487,6 +493,8 @@ class qtype_oumatrix extends question_type {
         $output .= '    <grademethod>' . $format->xml_escape($question->options->grademethod)
                 . "</grademethod>\n";
         $output .= "    <shuffleanswers>" . $question->options->shuffleanswers . "</shuffleanswers>\n";
+        $output .= "    <questionnumbering>" . $format->xml_escape(
+                $question->options->questionnumbering) . "</questionnumbering>\n";
 
         // Export columns data.
         $output .= "    <columns>\n";

@@ -62,6 +62,7 @@ $string['privacy:preference:grademethod'] = 'Whether the Grading type should be 
 $string['privacy:preference:inputtype'] = 'Whether the \'One or multiple answers?\' should be \'Single choice\' or \'Multiple response\'.';
 $string['privacy:preference:penalty'] = 'The penalty for each incorrect try when questions are run using the \'Interactive with multiple tries\' or \'Adaptive mode\' behaviour.';
 $string['privacy:preference:shuffleanswers'] = 'Whether the answers should be automatically shuffled.';
+$string['questionnumbering'] = 'Number the sub-questions?';
 $string['regradeissuenumcolumnschanged'] = 'The number of columns has changed.';
 $string['regradeissuenumrowschanged'] = 'The number of rows has changed.';
 $string['row'] = 'Row {$a}';

@@ -1,7 +1,7 @@
 @qtype @qtype_oumatrix
-Feature: Test exporting Numerical questions
+Feature: Test exporting OUMatrix questions
   As a teacher
-  In order to be able to reuse my Numerical questions
+  In order to be able to reuse my OUMatrix questions
   I need to export them
 
   Background:
@@ -18,11 +18,11 @@ Feature: Test exporting Numerical questions
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name             | template       |
+      | questioncategory | qtype    | name              | template       |
       | Test questions   | oumatrix | OUMatrix-001      | animals_single |
       | Test questions   | oumatrix | OUMatrix multiple | food_multiple  |
 
-    @javascript
+  @javascript
   Scenario: Export an OUMatrix question
     When I am on the "Course 1" "core_question > course question export" page logged in as teacher
     And I set the field "id_format_xml" to "1"

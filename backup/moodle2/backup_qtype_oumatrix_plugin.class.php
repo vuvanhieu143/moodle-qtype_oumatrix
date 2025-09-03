@@ -40,7 +40,7 @@ class backup_qtype_oumatrix_plugin extends backup_qtype_plugin {
         // Now create the qtype own structures.
         $matrix = new backup_nested_element('oumatrix', ['id'], ['inputtype', 'grademethod', 'shuffleanswers',
             'correctfeedback', 'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
-            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect',
+            'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect', 'questionnumbering',
         ]);
         $pluginwrapper->add_child($matrix);
 

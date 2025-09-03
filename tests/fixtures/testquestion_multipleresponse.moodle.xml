@@ -18,6 +18,7 @@
     <inputtype>multiple</inputtype>
     <grademethod>allnone</grademethod>
     <shuffleanswers>false</shuffleanswers>
+    <questionnumbering>none</questionnumbering>
     <columns>
       <column number="1">
         <text>is a good conductor of electricity</text>

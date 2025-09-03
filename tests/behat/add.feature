@@ -34,6 +34,7 @@ Feature: Test creating a Matrix question
       | id_rowanswers_1_a2                 | 1                                          |
       | id_rowname_2                       | Is a mammal                                |
       | id_rowanswers_2_a3                 | 1                                          |
+      | id_questionnumbering               | abc                                        |
       | For any correct response           | Correct feedback                           |
       | For any partially correct response | Partially correct feedback.                |
       | For any incorrect response         | Incorrect feedback.                        |
@@ -50,13 +51,13 @@ Feature: Test creating a Matrix question
     And I should see "Adding a Matrix question"
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Question name                      | Matrix-multiple-002                    |
-      | Question text                      | Choose a correct answers for each row. |
-      | General feedback                   | One and Three, Two, Two and Three      |
-      | id_status                          | Ready                                  |
-      | id_defaultmark                     | 1                                      |
-      | id_inputtype                       | multiple                               |
-      | id_grademethod                     | partial                                |
+      | Question name    | Matrix-multiple-002                    |
+      | Question text    | Choose a correct answers for each row. |
+      | General feedback | One and Three, Two, Two and Three      |
+      | id_status        | Ready                                  |
+      | id_defaultmark   | 1                                      |
+      | id_inputtype     | multiple                               |
+      | id_grademethod   | partial                                |
     When I press "id_updateform"
     And I set the following fields to these values:
       | id_columnname_0                    | One                         |
