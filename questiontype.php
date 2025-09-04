@@ -393,9 +393,9 @@ class qtype_oumatrix extends question_type {
             $format->getpath($data, ['#', 'inputtype'], 'single'));
         $question->grademethod = $format->import_text(
             $format->getpath($data, ['#', 'grademethod'], 'partial'));
-        $question->shuffleanswers = $format->trans_single(
-            $format->getpath($data, ['#', 'shuffleanswers', 0, '#'], 1));
-
+        $shuffleanswers = $format->getpath($data, ['#', 'shuffleanswers', 0, '#'], 1);
+        $question->shuffleanswers = $shuffleanswers === 'false' || $shuffleanswers === 'true'
+            ? $format->trans_single($shuffleanswers) : $shuffleanswers;
         $columns = $format->getpath($data, ['#', 'columns', 0, '#', 'column'], false);
         if ($columns) {
             $this->import_columns($format, $question, $columns);
@@ -486,8 +486,7 @@ class qtype_oumatrix extends question_type {
                 . "</inputtype>\n";
         $output .= '    <grademethod>' . $format->xml_escape($question->options->grademethod)
                 . "</grademethod>\n";
-        $output .= "    <shuffleanswers>" . $format->get_single(
-                        $question->options->shuffleanswers) . "</shuffleanswers>\n";
+        $output .= "    <shuffleanswers>" . $question->options->shuffleanswers . "</shuffleanswers>\n";
 
         // Export columns data.
         $output .= "    <columns>\n";

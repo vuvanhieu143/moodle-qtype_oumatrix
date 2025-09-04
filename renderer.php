@@ -147,8 +147,9 @@ abstract class qtype_oumatrix_renderer_base extends qtype_with_combined_feedback
         $table .= html_writer::start_tag('tr');
         $table .= html_writer::tag('th', '', ['scope' => 'col', 'class' => 'subquestion']);
         $index = 0;
-        foreach ($question->columns as $value) {
-            $table .= html_writer::tag('th', html_writer::span(format_string($value->name), 'answer_col', ['id' => 'col' . $index]),
+        foreach ($question->get_colorder($qa) as $colkey => $colid) {
+            $column = $question->columns[$colid];
+            $table .= html_writer::tag('th', html_writer::span(format_string($column->name), 'answer_col', ['id' => 'col' . $index]),
                 ['scope' => 'col', 'class' => 'align-middle text-center']);
             $index += 1;
         }
@@ -167,7 +168,7 @@ abstract class qtype_oumatrix_renderer_base extends qtype_with_combined_feedback
         $inputattributes['type'] = $this->get_input_type();
 
         // Adding table rows for the sub-questions.
-        foreach ($question->get_order($qa) as $rowkey => $rowid) {
+        foreach ($question->get_roworder($qa) as $rowkey => $rowid) {
 
             $row = $question->rows[$rowid];
             $rownewid = 'row'. $rowkey;
@@ -177,13 +178,14 @@ abstract class qtype_oumatrix_renderer_base extends qtype_with_combined_feedback
             $table .= html_writer::tag('th', html_writer::span(format_string($row->name), '', ['id' => $rownewid]),
                 ['class' => 'subquestion align-middle', 'scope' => 'row']);
 
-            for ($c = 1; $c <= count($question->columns); $c++) {
-                $inputattributes['name'] = $this->get_input_name($qa, $rowkey, $c);
-                $inputattributes['value'] = $this->get_input_value($c);
-                $inputattributes['id'] = $this->get_input_id($qa, $rowkey, $c);
-                $inputattributes['aria-labelledby'] = 'col' . ($c - 1). ' ' . $rownewid;
+            foreach ($question->get_colorder($qa) as $colkey => $colid) {
+                $column = $question->columns[$colid];
+                $inputattributes['name'] = $this->get_input_name($qa, $rowkey, $column->number);
+                $inputattributes['value'] = $this->get_input_value($column->number);
+                $inputattributes['id'] = $this->get_input_id($qa, $rowkey, $column->number);
+                $inputattributes['aria-labelledby'] = 'col' . $colkey . ' ' . $rownewid;
                 $inputattributes['class'] = 'align-middle';
-                $isselected = $question->is_choice_selected($response, $rowkey, $c);
+                $isselected = $question->is_choice_selected($response, $rowkey, $column->number);
 
                 // Get the row per feedback.
                 if ($options->feedback && $feedback == '' &&
@@ -201,8 +203,9 @@ abstract class qtype_oumatrix_renderer_base extends qtype_with_combined_feedback
                 if ($isselected) {
                     $inputattributes['checked'] = 'checked';
                     if ($options->correctness) {
-                        $feedbackimg = html_writer::span($this->feedback_image($this->is_right($question, $rowid, $c)));
-                        $class .= ' ' . $this->feedback_class($this->is_right($question, $rowid, $c));
+                        $feedbackimg = html_writer::span($this->feedback_image($this->is_right($question,
+                            $rowid, $column->number)));
+                        $class .= ' ' . $this->feedback_class($this->is_right($question, $rowid, $column->number));
                     }
                 } else {
                     unset($inputattributes['checked']);
