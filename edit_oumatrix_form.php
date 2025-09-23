@@ -16,7 +16,7 @@
 
 use qtype_oumatrix\row;
 use qtype_oumatrix\column;
-
+use qtype_oumatrix\utils;
 /**
  * Editing form for the oumatrix question type.
  *
@@ -104,7 +104,8 @@ class qtype_oumatrix_edit_form extends question_edit_form {
                 get_config('qtype_oumatrix', 'grademethod')));
         $mform->disabledIf('grademethod', 'inputtype', 'eq', 'single');
 
-        $mform->addElement('selectyesno', 'shuffleanswers', get_string('shuffleanswers', 'qtype_oumatrix'));
+        $mform->addElement('select', 'shuffleanswers', get_string('shuffleanswers', 'qtype_oumatrix'),
+                utils::shuffle_select_option());
         $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_oumatrix');
         $mform->setDefault('shuffleanswers', $this->get_default_value('shuffleanswers',
                 get_config('qtype_oumatrix', 'shuffleanswers')));

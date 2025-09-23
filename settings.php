@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use qtype_oumatrix\utils;
+
 if ($ADMIN->fulltree) {
     $inputtype = [
             'single' => new lang_string('inputtypesingle', 'qtype_oumatrix'),
@@ -41,7 +43,7 @@ if ($ADMIN->fulltree) {
             new lang_string('grademethod', 'qtype_oumatrix'),
             new lang_string('grademethod_desc', 'qtype_oumatrix'), 'partial', $grademethod));
 
-    $settings->add(new admin_setting_configcheckbox('qtype_oumatrix/shuffleanswers',
+    $settings->add(new admin_setting_configselect('qtype_oumatrix/shuffleanswers',
             new lang_string('shuffleanswers', 'qtype_oumatrix'),
-            new lang_string('shuffleanswers_desc', 'qtype_oumatrix'), '1'));
+            new lang_string('shuffleanswers_desc', 'qtype_oumatrix'), '0', utils::shuffle_select_option()));
 }

@@ -24,6 +24,7 @@
 
 use qtype_oumatrix\column;
 use qtype_oumatrix\row;
+use qtype_oumatrix\utils;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,8 +35,8 @@ defined('MOODLE_INTERNAL') || die();
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_oumatrix_base extends question_graded_automatically {
-    /** @var bool whether the rows should be shuffled. */
-    public bool $shuffleanswers;
+    /** @var int whether the rows/columns or both should be shuffled. */
+    public int $shuffleanswers;
 
     /** @var string 'All or none' or 'partial' grading method for multiple response. */
     public string $grademethod;
@@ -67,6 +68,9 @@ abstract class qtype_oumatrix_base extends question_graded_automatically {
     /** @var array The order of the rows, key => row number. */
     protected ?array $roworder = null;
 
+    /** @var array The order of the columns, key => column number. */
+    protected ?array $colorder = null;
+
     /**
      * Returns true if the response has been selected for that row and column.
      *
@@ -86,15 +90,25 @@ abstract class qtype_oumatrix_base extends question_graded_automatically {
     #[\Override]
     public function start_attempt(question_attempt_step $step, $variant) {
         $this->roworder = array_keys($this->rows);
-        if ($this->shuffleanswers) {
+        $this->colorder = array_keys($this->columns);
+        if ($this->shuffleanswers === utils::ROW_ONLY) {
             shuffle($this->roworder);
+        } else if ($this->shuffleanswers === utils::COLUMN_ONLY) {
+            shuffle($this->colorder);
+        } else if ($this->shuffleanswers === utils::ROW_AND_COLUMN) {
+            shuffle($this->roworder);
+            shuffle($this->colorder);
         }
         $step->set_qt_var('_roworder', implode(',', $this->roworder));
+        $step->set_qt_var('_colorder', implode(',', $this->colorder));
     }
 
     #[\Override]
     public function apply_attempt_state(question_attempt_step $step) {
         $this->roworder = explode(',', $step->get_qt_var('_roworder'));
+        $this->colorder = $step->get_qt_var('_colorder')
+            ? explode(',', $step->get_qt_var('_colorder'))
+            : array_keys($this->columns);
     }
 
     /**
@@ -103,9 +117,31 @@ abstract class qtype_oumatrix_base extends question_graded_automatically {
      * @param question_attempt $qa
      * @return array|null
      */
-    public function get_order(question_attempt $qa): ?array {
+    public function get_roworder(question_attempt $qa): ?array {
         $this->init_roworder($qa);
         return $this->roworder;
+    }
+
+    /**
+     * Returns the col order of the question being displayed.
+     *
+     * @param question_attempt $qa
+     * @return array|null
+     */
+    public function get_colorder(question_attempt $qa): ?array {
+        $this->init_colorder($qa);
+        return $this->colorder;
+    }
+
+    /**
+     * Sets the column order from the question_attempt.
+     *
+     * @param question_attempt $qa
+     */
+    protected function init_colorder(question_attempt $qa): void {
+        $this->colorder = $qa->get_step(0)->get_qt_var('_colorder')
+            ? explode(',', $qa->get_step(0)->get_qt_var('_colorder'))
+            : array_keys($this->columns);
     }
 
     /**
@@ -249,7 +285,8 @@ class qtype_oumatrix_single extends qtype_oumatrix_base {
 
             $fieldname = $this->field($key);
             if (array_key_exists($fieldname, $response)) {
-                foreach ($this->columns as $column) {
+                foreach ($this->colorder as $colkey => $colnumber) {
+                    $column = $this->columns[$colnumber];
                     if ($response[$fieldname] == $column->number) {
                         $responsewords[] = $row->name . ' → ' . $column->name;
                     }
@@ -318,7 +355,8 @@ class qtype_oumatrix_single extends qtype_oumatrix_base {
                 continue;
             }
             if ($key === ($row->number - 1) && $row->name === $subquestions[$key]) {
-                foreach ($this->columns as $column) {
+                foreach ($this->colorder as $colkey => $colnumber) {
+                    $column = $this->columns[$colnumber];
                     if ($column->name !== $answers[$key]) {
                         continue;
                     }
@@ -365,7 +403,8 @@ class qtype_oumatrix_multiple extends qtype_oumatrix_base {
     public function get_expected_data(): array {
         $expected = [];
         foreach ($this->rows as $row) {
-            foreach ($this->columns as $column) {
+            foreach ($this->colorder as $colkey => $colnumber) {
+                $column = $this->columns[$colnumber];
                 $expected[$this->field($row->number - 1, $column->number)] = PARAM_INT;
             }
         }
@@ -395,7 +434,8 @@ class qtype_oumatrix_multiple extends qtype_oumatrix_base {
     #[\Override]
     public function is_same_response(array $prevresponse, array $newresponse): bool {
         foreach ($this->roworder as $key => $notused) {
-            foreach ($this->columns as $column) {
+            foreach ($this->colorder as $colkey => $colnumber) {
+                $column = $this->columns[$colnumber];
                 $fieldname = $this->field($key, $column->number);
                 if (!question_utils::arrays_same_at_key_integer($prevresponse, $newresponse, $fieldname)) {
                     return false;
@@ -426,7 +466,8 @@ class qtype_oumatrix_multiple extends qtype_oumatrix_base {
             $row = $this->rows[$rownumber];
             $rowresponse = $row->name . ' → ';
             $answers = [];
-            foreach ($this->columns as $column) {
+            foreach ($this->colorder as $colkey => $colnumber) {
+                $column = $this->columns[$colnumber];
                 $fieldname = $this->field($key, $column->number);
                 if (array_key_exists($fieldname, $response)) {
                     $answers[] = $column->name;
@@ -444,7 +485,8 @@ class qtype_oumatrix_multiple extends qtype_oumatrix_base {
     public function is_complete_response(array $response): bool {
         foreach ($this->roworder as $key => $rownumber) {
             $inputresponse = false;
-            foreach ($this->columns as $column) {
+            foreach ($this->colorder as $colkey => $colnumber) {
+                $column = $this->columns[$colnumber];
                 $fieldname = $this->field($key, $column->number);
                 if (array_key_exists($fieldname, $response)) {
                     $inputresponse = true;
@@ -460,7 +502,8 @@ class qtype_oumatrix_multiple extends qtype_oumatrix_base {
     #[\Override]
     public function is_gradable_response(array $response): bool {
         foreach ($this->roworder as $key => $rownumber) {
-            foreach ($this->columns as $column) {
+            foreach ($this->colorder as $colkey => $colnumber) {
+                $column = $this->columns[$colnumber];
                 $fieldname = $this->field($key, $column->number);
                 if (array_key_exists($fieldname, $response)) {
                     return true;
@@ -476,11 +519,11 @@ class qtype_oumatrix_multiple extends qtype_oumatrix_base {
         foreach ($this->roworder as $rowkey => $rownumber) {
             $row = $this->rows[$rownumber];
             $rowname = format_string($row->name);
-
-            foreach ($this->columns as $column) {
+            foreach ($this->colorder as $colkey => $colnumber) {
+                $column = $this->columns[$colnumber];
                 if ($this->is_choice_selected($response, $rowkey, $column->number)) {
                     $classifiedresponse[shorten_text($row->number . '. ' . format_string($rowname), 50) .
-                            shorten_text(': ' . format_string($column->name), 50)] =
+                    shorten_text(': ' . format_string($column->name), 50)] =
                         new question_classified_response(
                             1,
                             get_string('selected', 'qtype_oumatrix'),
@@ -544,7 +587,8 @@ class qtype_oumatrix_multiple extends qtype_oumatrix_base {
         foreach ($this->roworder as $rowkey => $rownumber) {
             $row = $this->rows[$rownumber];
             $rowrightresponse = 0;
-            foreach ($this->columns as $column) {
+            foreach ($this->colorder as $colkey => $colnumber) {
+                $column = $this->columns[$colnumber];
                 $reponsekey = $this->field($rowkey, $column->number);
                 if (array_key_exists($reponsekey, $response)) {
                     if (array_key_exists($column->number, $row->correctanswers)) {
@@ -577,7 +621,8 @@ class qtype_oumatrix_multiple extends qtype_oumatrix_base {
         $rightresponse = 0;
         foreach ($this->roworder as $rowkey => $rownumber) {
             $row = $this->rows[$rownumber];
-            foreach ($this->columns as $column) {
+            foreach ($this->colorder as $colkey => $colnumber) {
+                $column = $this->columns[$colnumber];
                 $reponsekey = $this->field($rowkey, $column->number);
                 if (array_key_exists($reponsekey, $response) && array_key_exists($column->number, $row->correctanswers)) {
                     $rightresponse++;
