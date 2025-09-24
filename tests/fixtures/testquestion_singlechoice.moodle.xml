@@ -107,6 +107,7 @@
       <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
     </incorrectfeedback>
     <shownumcorrect/>
+    <questionnumbering>none</questionnumbering>
     <hint format="html">
       <text><![CDATA[<p>Hint 1</p>]]></text>
     </hint>

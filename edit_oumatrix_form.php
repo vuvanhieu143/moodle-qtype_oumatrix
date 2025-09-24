@@ -14,9 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 use qtype_oumatrix\row;
 use qtype_oumatrix\column;
 use qtype_oumatrix\utils;
+require_once($CFG->dirroot . '/question/type/multichoice/questiontype.php');
+
 /**
  * Editing form for the oumatrix question type.
  *
@@ -109,6 +113,10 @@ class qtype_oumatrix_edit_form extends question_edit_form {
         $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_oumatrix');
         $mform->setDefault('shuffleanswers', $this->get_default_value('shuffleanswers',
                 get_config('qtype_oumatrix', 'shuffleanswers')));
+
+        $mform->addElement('select', 'questionnumbering',
+            get_string('questionnumbering', 'qtype_oumatrix'), qtype_multichoice::get_numbering_styles());
+        $mform->setDefault('questionnumbering', 'none');
 
         // Add update field.
         $mform->addElement('submit', 'updateform', get_string('updateform', 'qtype_oumatrix'));
@@ -236,6 +244,7 @@ class qtype_oumatrix_edit_form extends question_edit_form {
         $question->inputtype = $question->options->inputtype;
         $question->grademethod = $question->options->grademethod;
         $question->shuffleanswers = $question->options->shuffleanswers;
+        $question->questionnumbering = $question->options->questionnumbering;
         $question->shownumcorrect = $question->options->shownumcorrect;
         return $question;
     }

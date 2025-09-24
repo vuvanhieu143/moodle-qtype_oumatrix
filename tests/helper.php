@@ -71,6 +71,7 @@ class qtype_oumatrix_test_helper extends question_test_helper {
         $qdata->options->incorrectfeedback = test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK;
         $qdata->options->incorrectfeedbackformat = FORMAT_HTML;
         $qdata->options->shownumcorrect = 1;
+        $qdata->options->questionnumbering = 'abc';
 
         $qdata->columns = [
                 11 => (object) [
@@ -172,6 +173,7 @@ class qtype_oumatrix_test_helper extends question_test_helper {
         $qfdata->inputtype = 'single';
         $qfdata->grademethod = 'partial';
         $qfdata->shuffleanswers = 0;
+        $qfdata->questionnumbering = 'abc';
         $qfdata->correctfeedback = [
                 'text' => test_question_maker::STANDARD_OVERALL_CORRECT_FEEDBACK,
                 'format' => FORMAT_HTML,
@@ -265,6 +267,7 @@ class qtype_oumatrix_test_helper extends question_test_helper {
         $qdata->options->incorrectfeedback = test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK;
         $qdata->options->incorrectfeedbackformat = FORMAT_HTML;
         $qdata->options->shownumcorrect = 1;
+        $qdata->options->questionnumbering = 'none';
 
         $qdata->columns = [
                 21 => (object) [
@@ -372,6 +375,7 @@ class qtype_oumatrix_test_helper extends question_test_helper {
         $qfdata->inputtype = 'multiple';
         $qfdata->grademethod = 'partial';
         $qfdata->shuffleanswers = 0;
+        $qfdata->questionnumbering = 'none';
         $qfdata->correctfeedback = [
                 'text' => test_question_maker::STANDARD_OVERALL_CORRECT_FEEDBACK,
                 'format' => FORMAT_HTML,
@@ -472,7 +476,7 @@ class qtype_oumatrix_test_helper extends question_test_helper {
         $question->incorrectfeedback = test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK;
         $question->incorrectfeedbackformat = FORMAT_HTML;
         $question->shownumcorrect = 1;
-
+        $question->questionnumbering = 'abc';
         $question->columns = [
             1 => new column($question->id, 1, 'Insects', 11),
             2 => new column($question->id, 2, 'Fish', 12),
@@ -529,7 +533,7 @@ class qtype_oumatrix_test_helper extends question_test_helper {
         $question->incorrectfeedback = test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK;
         $question->incorrectfeedbackformat = FORMAT_HTML;
         $question->shownumcorrect = 1;
-
+        $question->questionnumbering = 'none';
         $question->columns = [
             1 => new column($question->id, 1, 'Chicken breast', 21),
             2 => new column($question->id, 2, 'Carrot', 22),

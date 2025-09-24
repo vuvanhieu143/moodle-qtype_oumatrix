@@ -1,7 +1,7 @@
 @qtype @qtype_oumatrix
-Feature: Preview a Numerical question
+Feature: Preview a OUMatrix question
   As a teacher
-  In order to check my Numerical questions will work for students
+  In order to check my OUMatrix questions will work for students
   I need to preview them
 
   Background:
@@ -26,6 +26,9 @@ Feature: Preview a Numerical question
   Scenario: Preview a Matrix(single) question and submit correct responses.
     Given I am on the "Single matrix 001" "core_question > preview" page logged in as teacher
     And I should see "Animal classification. Please answer the sub questions in all 4 rows."
+    And I should see "a. Bee"
+    And I should see "b. Salmon"
+    And I should see "c. Seagull"
     And I set the field with xpath "//input[@type='radio' and @aria-labelledby='col0 row0']" to "1"
     And I set the field with xpath "//input[@type='radio' and @aria-labelledby='col1 row1']" to "1"
     And I set the field with xpath "//input[@type='radio' and @aria-labelledby='col2 row2']" to "1"

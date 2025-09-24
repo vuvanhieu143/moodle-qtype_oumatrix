@@ -11,7 +11,7 @@
     background-color: rgba(0, 0, 0, 0.03);
 }
 .que.oumatrix .answer .generaltable tbody tr:nth-of-type(odd) {
-    background-color: #FFFFFF;
+    background-color: #fff;
 }
 
 /* Editing form. */

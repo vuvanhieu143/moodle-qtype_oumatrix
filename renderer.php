@@ -23,6 +23,7 @@
  */
 
 use qtype_oumatrix\column;
+use question_utils;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -168,6 +169,7 @@ abstract class qtype_oumatrix_renderer_base extends qtype_with_combined_feedback
         $inputattributes['type'] = $this->get_input_type();
 
         // Adding table rows for the sub-questions.
+        $columncount = 0;
         foreach ($question->get_roworder($qa) as $rowkey => $rowid) {
 
             $row = $question->rows[$rowid];
@@ -175,7 +177,9 @@ abstract class qtype_oumatrix_renderer_base extends qtype_with_combined_feedback
             $feedback = '';
 
             $table .= html_writer::start_tag('tr');
-            $table .= html_writer::tag('th', html_writer::span(format_string($row->name), '', ['id' => $rownewid]),
+            $table .= html_writer::tag('th', html_writer::span(
+                $this->number_in_style($columncount, $question->questionnumbering) .
+                format_string($row->name), '', ['id' => $rownewid]),
                 ['class' => 'subquestion align-middle', 'scope' => 'row']);
 
             foreach ($question->get_colorder($qa) as $colkey => $colid) {
@@ -222,6 +226,7 @@ abstract class qtype_oumatrix_renderer_base extends qtype_with_combined_feedback
                 $table .= html_writer::tag('td', $feedback);
             }
             $table .= html_writer::end_tag('tr');
+            $columncount++;
         }
 
         $table .= html_writer::end_tag('table');
@@ -252,6 +257,48 @@ abstract class qtype_oumatrix_renderer_base extends qtype_with_combined_feedback
         } else {
             return "";
         }
+    }
+
+    /**
+     * Renders a number in a particular style.
+     *
+     * @param int $num The number, starting at 0.
+     * @param string $style The style to render the number in.
+     * @return string the number $num in the requested style.
+     */
+    protected function number_in_style(int $num, string $style): string {
+        switch($style) {
+            case 'abc':
+                $number = chr(ord('a') + $num);
+                break;
+            case 'ABCD':
+                $number = chr(ord('A') + $num);
+                break;
+            case '123':
+                $number = $num + 1;
+                break;
+            case 'iii':
+                $number = question_utils::int_to_roman($num + 1);
+                break;
+            case 'IIII':
+                $number = strtoupper(question_utils::int_to_roman($num + 1));
+                break;
+            case 'none':
+                return '';
+            default:
+                return 'ERR';
+        }
+        return $this->number_html($number);
+    }
+
+    /**
+     * Returns the HTML to display before the number in a question.
+     *
+     * @param string $qnum The question number, in whatever format is required.
+     * @return string HTML to display before the question number.
+     */
+    protected function number_html(string $qnum): string {
+        return $qnum . '. ';
     }
 }
 
