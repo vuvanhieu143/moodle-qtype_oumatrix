@@ -22,9 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use qtype_oumatrix\column;
-use question_utils;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -150,7 +147,9 @@ abstract class qtype_oumatrix_renderer_base extends qtype_with_combined_feedback
         $index = 0;
         foreach ($question->get_colorder($qa) as $colkey => $colid) {
             $column = $question->columns[$colid];
-            $table .= html_writer::tag('th', html_writer::span(format_string($column->name), 'answer_col', ['id' => 'col' . $index]),
+            $table .= html_writer::tag('th', html_writer::span(
+                    question_utils::format_question_fragment($column->name, $this->page->context),
+                    'answer_col', ['id' => 'col' . $index]),
                 ['scope' => 'col', 'class' => 'align-middle text-center']);
             $index += 1;
         }
@@ -179,7 +178,7 @@ abstract class qtype_oumatrix_renderer_base extends qtype_with_combined_feedback
             $table .= html_writer::start_tag('tr');
             $table .= html_writer::tag('th', html_writer::span(
                 $this->number_in_style($columncount, $question->questionnumbering) .
-                format_string($row->name), '', ['id' => $rownewid]),
+                question_utils::format_question_fragment($row->name, $this->page->context), '', ['id' => $rownewid]),
                 ['class' => 'subquestion align-middle', 'scope' => 'row']);
 
             foreach ($question->get_colorder($qa) as $colkey => $colid) {
@@ -397,7 +396,11 @@ class qtype_oumatrix_multiple_renderer extends qtype_oumatrix_renderer_base {
                     $answers[] = $question->columns[$columnnumber]->name;
                 }
                 $rowanswer .= implode(', ', $answers);
-                $rightanswers[] = $rowanswer;
+                if ($answers) {
+                    $rightanswers[] = $rowanswer;
+                    $rowanswer .= implode(', ', $answers);
+                    $rightanswers[] = $rowanswer;
+                }
             }
         }
         return $this->correct_choices($rightanswers);

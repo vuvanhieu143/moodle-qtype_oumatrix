@@ -487,6 +487,11 @@ class qtype_oumatrix_multiple extends qtype_oumatrix_base {
     #[\Override]
     public function is_complete_response(array $response): bool {
         foreach ($this->roworder as $key => $rownumber) {
+            // Skip distractor rows (no correct answers defined)
+            $row = $this->rows[$rownumber];
+            if (empty($row->correctanswers)) {
+                continue;
+            }
             $inputresponse = false;
             foreach ($this->colorder as $colkey => $colnumber) {
                 $column = $this->columns[$colnumber];

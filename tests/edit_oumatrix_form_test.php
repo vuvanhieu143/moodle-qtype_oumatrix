@@ -295,4 +295,47 @@ final class edit_oumatrix_form_test extends \advanced_testcase {
         $expected = get_string('tagsnotallowed', 'qtype_oumatrix', $a);
         $this->assertNotEquals($expected, $form->get_illegal_tag_error('<em>'));
     }
+
+    /**
+     * Test the form correctly validates a multiple response matrix with no answers selected anywhere.
+     */
+    public function test_validation_multiple_no_answers_anywhere(): void {
+        [$form, $category] = $this->get_form('qtype_oumatrix_edit_form');
+        $formdata = (array) \test_question_maker::get_question_form_data('oumatrix', 'food_multiple');
+        $formdata['category'] = $category->id;
+
+        // Remove all answers.
+        foreach ($formdata['columnname'] as $colkey => $unused) {
+            $label = 'rowanswersa' . ($colkey + 1);
+            unset($formdata[$label]);
+        }
+        $errors = $form->validation($formdata, []);
+        $this->assertArrayHasKey('rowoptions[' . 0 .']', $errors);
+        $this->assertEquals(
+            get_string('noinputanswer', 'qtype_oumatrix'),
+            $errors['rowoptions[' . 0 .']']
+        );
+    }
+
+    /**
+     * Test the form correctly validates a 2x2 matrix with only partial answers selected.
+     */
+    public function test_validation_multiple_2x2_partial_answers_allowed(): void {
+        [$form, $category] = $this->get_form('qtype_oumatrix_edit_form');
+        $formdata = (array) \test_question_maker::get_question_form_data('oumatrix', 'food_multiple');
+        $formdata['category'] = $category->id;
+
+        // Clear all answers first.
+        foreach ($formdata['columnname'] as $colkey => $unused) {
+            $label = 'rowanswersa' . ($colkey + 1);
+            unset($formdata[$label]);
+        }
+
+        // Add one valid answer only.
+        $formdata['rowanswersa1'][1] = 1;
+
+        $errors = $form->validation($formdata, []);
+
+        $this->assertEmpty($errors);
+    }
 }

@@ -26,6 +26,7 @@
 $string['addmoreblanks'] = 'Blanks for {no} more {$a}';
 $string['answerlabel'] = 'Column {$a}';
 $string['answerlabelshort'] = 'A{$a}';
+$string['atleastonecorrect'] = 'At least one correct answer must be selected for each sub-question.';
 $string['blankcolumnsnotallowed'] = 'Empty column name is not allowed.';
 $string['columnshdr'] = 'Matrix columns (answers)';
 $string['correctanswer'] = 'Correct answer';

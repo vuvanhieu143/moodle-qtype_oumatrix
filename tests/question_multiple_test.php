@@ -86,6 +86,30 @@ final class question_multiple_test extends \advanced_testcase {
         $this->assertTrue($question->is_complete_response($response));
     }
 
+    /**
+     * Test that distractor rows are skipped when checking for complete response.
+     */
+    public function test_is_complete_response_skips_distractor_row(): void {
+        $question = \test_question_maker::make_question('oumatrix', 'food_multiple');
+        // Make the row 2 a distractor.
+        $question->rows[2]->correctanswers = [];
+        $question->start_attempt(new question_attempt_step(), 1);
+
+        $this->assertFalse($question->is_complete_response([]));
+
+        // Only first row answered still incomplete.
+        $response = ['rowanswers0_1' => '1'];
+        $this->assertFalse($question->is_complete_response($response));
+
+        // Answer row 1 and row 3 (skip distractor row 2).
+        $response = [
+            'rowanswers0_1' => '1',
+            'rowanswers2_1' => '1',
+        ];
+
+        $this->assertTrue($question->is_complete_response($response));
+    }
+
     public function test_is_gradable_response(): void {
         $question = \test_question_maker::make_question('oumatrix', 'food_multiple');
         $question->start_attempt(new question_attempt_step(), 1);

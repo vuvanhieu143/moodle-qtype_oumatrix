@@ -392,18 +392,41 @@ class qtype_oumatrix_edit_form extends question_edit_form {
                 }
             }
         } else {
-            // Validate if correct answers have been input for oumatrix multiple choice question.
-            foreach ($nonemptyrows as $rowkey => $rowname) {
-                $answerfound = false;
-                foreach ($data['columnname'] as $colkey => $unused) {
-                    $rowanswerslabel = "rowanswers" . 'a' . ($colkey + 1);
-                    if (isset($data[$rowanswerslabel]) && array_key_exists($rowkey, $data[$rowanswerslabel])) {
-                        $answerfound = true;
-                        break;
-                    }
+            $nonemptycolumns = array_filter($data['columnname']);
+            $rowcount = count($nonemptyrows);
+            $columncount = count($nonemptycolumns);
+            $anyanswerselected = false;
+            // Check if ANY answer exists in the whole matrix
+            foreach ($nonemptycolumns as $colkey => $unused) {
+                $rowanswerslabel = "rowanswers" . 'a' . ($colkey + 1);
+
+                if (!empty($data[$rowanswerslabel])) {
+                    $anyanswerselected = true;
+                    break;
                 }
-                if (!$answerfound) {
-                    $errors['rowoptions[' . $rowkey . ']'] = get_string('noinputanswer', 'qtype_oumatrix');
+            }
+            // Prevent completely empty matrix
+            if (!$anyanswerselected) {
+                // Just put the error on the first row.
+                $errors['rowoptions[' . 0 .']'] = get_string('noinputanswer', 'qtype_oumatrix');
+                return $errors;
+            }
+            // Enforce per-row only if matrix is < 2x2.
+            if ($rowcount < 2 || $columncount < 2) {
+                foreach ($nonemptyrows as $rowkey => $rowname) {
+                    $answerfound = false;
+                    foreach ($nonemptycolumns as $colkey => $unused) {
+                        $rowanswerslabel = "rowanswers" . 'a' . ($colkey + 1);
+                        if (!empty($data[$rowanswerslabel]) &&
+                            array_key_exists($rowkey, $data[$rowanswerslabel])) {
+                            $answerfound = true;
+                            break;
+                        }
+                    }
+                    if (!$answerfound) {
+                        $errors['rowoptions[' . $rowkey . ']'] =
+                            get_string('noinputanswer', 'qtype_oumatrix');
+                    }
                 }
             }
         }
