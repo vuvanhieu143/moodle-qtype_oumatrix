@@ -334,7 +334,11 @@ class qtype_oumatrix_single_renderer extends qtype_oumatrix_renderer_base {
         $question = $qa->get_question();
         $right = [];
         foreach ($question->rows as $row) {
-            $right[] = $row->name . ' → ' . $question->columns[array_key_first($row->correctanswers)]->name;
+            if (!empty($question->columns[array_key_first($row->correctanswers)]->name)) {
+                $right[] = $row->name . ' → ' . $question->columns[array_key_first($row->correctanswers)]->name;
+            } else {
+                $right[] = $row->name . ' → ' . get_string('none', 'qtype_oumatrix');
+            }
         }
         return $this->correct_choices($right);
     }
@@ -395,12 +399,12 @@ class qtype_oumatrix_multiple_renderer extends qtype_oumatrix_renderer_base {
                 foreach ($row->correctanswers as $columnnumber => $notused) {
                     $answers[] = $question->columns[$columnnumber]->name;
                 }
-                $rowanswer .= implode(', ', $answers);
                 if ($answers) {
-                    $rightanswers[] = $rowanswer;
                     $rowanswer .= implode(', ', $answers);
-                    $rightanswers[] = $rowanswer;
+                } else {
+                    $rowanswer .= get_string('none', 'qtype_oumatrix');
                 }
+                $rightanswers[] = $rowanswer;
             }
         }
         return $this->correct_choices($rightanswers);

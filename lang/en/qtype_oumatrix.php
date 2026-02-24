@@ -26,7 +26,6 @@
 $string['addmoreblanks'] = 'Blanks for {no} more {$a}';
 $string['answerlabel'] = 'Column {$a}';
 $string['answerlabelshort'] = 'A{$a}';
-$string['atleastonecorrect'] = 'At least one correct answer must be selected for each sub-question.';
 $string['blankcolumnsnotallowed'] = 'Empty column name is not allowed.';
 $string['columnshdr'] = 'Matrix columns (answers)';
 $string['correctanswer'] = 'Correct answer';
@@ -48,6 +47,7 @@ $string['inputtype'] = 'One or multiple answers?';
 $string['inputtype_desc'] = 'One or multiple answers? can be either \'Single choice\' or \'Multiple response\' for each row in the matrix table.';
 $string['inputtypemultiple'] = 'Multiple response';
 $string['inputtypesingle'] = 'Single choice';
+$string['none'] = '(None)';
 $string['noinputanswer'] = 'Each sub-question should have at least one correct answer.';
 $string['notenoughanswercols'] = 'You must have at least {$a} answer columns.';
 $string['notenoughquestionrows'] = 'You must have at least {$a} sub-questions.';

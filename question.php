@@ -302,6 +302,11 @@ class qtype_oumatrix_single extends qtype_oumatrix_base {
     #[\Override]
     public function is_complete_response(array $response): bool {
         foreach ($this->roworder as $key => $rownumber) {
+            $row = $this->rows[$rownumber];
+            // Skip distractor rows (no correct answers defined).
+            if (empty($row->correctanswers)) {
+                continue;
+            }
             $fieldname = $this->field($key);
             if (!array_key_exists($fieldname, $response)) {
                 return false;
@@ -487,7 +492,7 @@ class qtype_oumatrix_multiple extends qtype_oumatrix_base {
     #[\Override]
     public function is_complete_response(array $response): bool {
         foreach ($this->roworder as $key => $rownumber) {
-            // Skip distractor rows (no correct answers defined)
+            // Skip distractor rows (no correct answers defined).
             $row = $this->rows[$rownumber];
             if (empty($row->correctanswers)) {
                 continue;
