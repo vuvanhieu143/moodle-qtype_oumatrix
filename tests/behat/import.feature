@@ -25,7 +25,7 @@ Feature: Test importing OU matrix questions
     And I should see "Importing 1 questions from file"
     And I should see "1. Select the correct option for each of the animals and the family they belong to."
     And I press "Continue"
-    And I should see "OU matrix single choice"
+    And I should see "OUMatrix single choice"
 
   @javascript @_file_upload
   Scenario: Import OU matrix multiple response question.
@@ -37,4 +37,4 @@ Feature: Test importing OU matrix questions
     And I should see "Importing 1 questions from file"
     And I should see "1. Select the true statements for each of the materials by ticking the boxes in the table."
     And I press "Continue"
-    And I should see "OU matrix multiple choice"
+    And I should see "OUMatrix multiple choice"

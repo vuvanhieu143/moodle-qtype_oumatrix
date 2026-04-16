@@ -18,7 +18,7 @@ Feature: Test creating an OU matrix question
   @javascript
   Scenario: Create an OU matrix question with single choice option
     Given I am on the "Course 1" "core_question > course question bank" page logged in as teacher
-    When I add a "OU Matrix" question filling the form with:
+    When I add a "OU matrix" question filling the form with:
       | Question name                      | Matrix-single-001                         |
       | Question text                      | Choose a correct answer for each row.     |
       | General feedback                   | Salmon(Fish), Chicken(Bird), Lamb(Mammal) |
